@@ -20,8 +20,8 @@ def main():
 	# Extraction du dataset
 	dataField			= pand.read_csv(args.datasetPath);
 	describeFeatureArr	= dataField.apply(describeFeature);
-	printFeatures(describeFeatureArr);
-
+	describeFeatureLeg	= describeFeature(None);
+	printFeatures(describeFeatureLeg, describeFeatureArr);
 
 	# Creation des features (type Feature)
 
@@ -29,10 +29,25 @@ def main():
 # Utils
 def describeFeature(feature : pand.Series) -> list :
 
-	# Tester si la feature est bien numerique
+	#
+	# Check si la valeur demandee est la legande
+	if (feature is None):
+		return ([
+			"name",
+			"nb elements",
+			"mean",
+			"std",
+			"min",
+			"25%",
+			"50%",
+			"75%",
+			"max"]);
 
+	#
+	# Tester si la feature est bien numerique
 	if (feature.dtype != np.float64):
 		return ;
+
 
 	# print("\n---\n");
 	# print("feature : {}".format(feature.name))
@@ -67,10 +82,7 @@ def describeFeature(feature : pand.Series) -> list :
 
 	return (arrayResult);
 
-def printFeatures(featureArr):
-
-	print(featureArr);
-
+def printFeatures(legend, featureArr, width = 16):
 	#
 	# Check que tous les tableaux sont de la meme taille
 	arrLen = 0;
@@ -91,8 +103,15 @@ def printFeatures(featureArr):
 			if (not row):
 				continue ;
 			printLine.append(row[i]);
-		print("  ".join(f"{element:>20}" for element in printLine))
-		# print(printLine);
+
+		printStr = "";
+		printStr += (f"{legend[i]:<{width}}");
+		for element in printLine:
+			if (type(element) == str):
+				printStr += (f"{element:>{width}.14}");
+			else:
+				printStr += (f"{element:>{width}.8f}");
+		print(printStr);
 
 def pandasSerieToList(serie : pand.Series) -> list :
 	return serie.tolist()
