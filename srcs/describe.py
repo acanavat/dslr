@@ -87,7 +87,7 @@ def printFeatures(legend, featureArr, width = 16):
 	# Check que tous les tableaux sont de la meme taille
 	arrLen = 0;
 	for row in featureArr:
-		if (not row):
+		if (row is None or not row):
 			continue ;
 		if (arrLen and arrLen != len(row)):
 			print ("erreur taile tableau, tous les elements sous tableaux doivent etre de taille egale")
