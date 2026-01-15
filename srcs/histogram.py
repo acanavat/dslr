@@ -4,7 +4,7 @@ import array
 import argparse
 import matplotlib
 import matplotlib.pyplot as plt
-
+import numpy as np
 import pandas as pand
 
 from describe import describeFeature
@@ -21,23 +21,74 @@ def main():
 	#
 	# Extraction du dataset
 	dataField	= pand.read_csv(args.datasetPath);
+	describe	= dataField.apply(describeFeature);
+
+	# stdArr		= [];
+	# for key, value in describe.items():
+	# 	if (value is None):
+	# 		continue
+	# 	std = value[3]
+	# 	stdArr.append(std)
+	# print(stdArr);
+	# plt.hist(stdArr)
+	# plt.autoscale(axis='x')
+	# plt.tight_layout()
+	# plt.show()
 
 	#
-	# Print
-	houses = getHouseMap(dataField);
+	# PRINT V2
+	# perfect = {}
+	# for key, value in df.items():
+	# 	if (value.dtype != np.float64):
+	# 		continue ;
+	# 	if key not in perfect:
+	# 		perfect[key] = [];
+	# 	perfect[key].append(value)
+
+	# # 	perfect = [magical for magical in arr if arr["Arithmancy"]]
+	# # print(perfect)
+	# 	return ;
+
+
+
+	# -- PRINT V1 : NE MARCHE QUE POUR UNE MATIERE
+	houses		= getHouseMap(dataField);
+	finalArr	= {};
 	for house, arr in houses.items():
 		print("__ {}".format(house))
-		test = [row["Care of Magical Creatures"] for row in houses[house] if pand.notnull(row["Care of Magical Creatures"])]
-
 		df			= pand.DataFrame(arr)
-		printable	= df.apply(describeFeature);
-		printFeatures(describeFeature(None), printable);
 
-		plt.hist(test, alpha=0.5)
-	plt.show()
+		finalDict	= {};
+		for name, course in df.items():
+			if (course.dtype != np.float64):
+				continue ;
+			print("GAY:", name)
+
+			if name not in finalDict:
+				finalDict[name] = [];
+			finalDict[name].append(row for row in course if pand.notnull(row));
+		
+		if house not in finalArr:
+			finalArr[house] = [];
+		finalArr[house].append(finalDict);
+
+	print(finalArr);
+
+	for testUltimate, untimateUltimate in finalArr.items():
+		for theFinalUltimate in untimateUltimate:
+			for absoluteDictKey, absoluteDictValye in theFinalUltimate.items():
+				print(absoluteDictKey, "->", absoluteDictValye)
+				plt.hist(finalDict, alpha=0.5)
+		plt.show()
+
+
+
+
+		# printable	= df.apply(describeFeature);
+		# printFeatures(describeFeature(None), printable);
 
 def getHouseMap(dataField : pand.core.frame.DataFrame) -> {}:
-	houseMap = {};
+	houseMap = {}
 	for index, row in dataField.iterrows():
 		if (row is None):
 			continue ;
