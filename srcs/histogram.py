@@ -4,8 +4,9 @@ import array
 import argparse
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pand
+
+import numpy	as np
+import pandas	as pand
 
 from describe import describeFeature
 from describe import printFeatures
@@ -21,74 +22,48 @@ def main():
 	#
 	# Extraction du dataset
 	dataField	= pand.read_csv(args.datasetPath);
-	describe	= dataField.apply(describeFeature);
-
-	# stdArr		= [];
-	# for key, value in describe.items():
-	# 	if (value is None):
-	# 		continue
-	# 	std = value[3]
-	# 	stdArr.append(std)
-	# print(stdArr);
-	# plt.hist(stdArr)
-	# plt.autoscale(axis='x')
-	# plt.tight_layout()
-	# plt.show()
 
 	#
-	# PRINT V2
-	# perfect = {}
-	# for key, value in df.items():
-	# 	if (value.dtype != np.float64):
-	# 		continue ;
-	# 	if key not in perfect:
-	# 		perfect[key] = [];
-	# 	perfect[key].append(value)
+	# Print
+	name = []
+	for key, value in dataField.items():
+		if (value.dtype != np.float64):
+			continue
+		name.append(key)
+	p = 10
+	for i in name:
+		if (len(name) % p) == 0:
+			break
+		p -= 1
 
-	# # 	perfect = [magical for magical in arr if arr["Arithmancy"]]
-	# # print(perfect)
-	# 	return ;
-
-
-
-	# -- PRINT V1 : NE MARCHE QUE POUR UNE MATIERE
-	houses		= getHouseMap(dataField);
-	finalArr	= {};
-	for house, arr in houses.items():
-		print("__ {}".format(house))
-		df			= pand.DataFrame(arr)
-
-		finalDict	= {};
-		for name, course in df.items():
-			if (course.dtype != np.float64):
-				continue ;
-			print("GAY:", name)
-
-			if name not in finalDict:
-				finalDict[name] = [];
-			finalDict[name].append(row for row in course if pand.notnull(row));
-		
-		if house not in finalArr:
-			finalArr[house] = [];
-		finalArr[house].append(finalDict);
-
-	print(finalArr);
-
-	for testUltimate, untimateUltimate in finalArr.items():
-		for theFinalUltimate in untimateUltimate:
-			for absoluteDictKey, absoluteDictValye in theFinalUltimate.items():
-				print(absoluteDictKey, "->", absoluteDictValye)
-				plt.hist(finalDict, alpha=0.5)
-		plt.show()
+	largeur = 5;
+	longeur = 3;
 
 
+	fig, axs = plt.subplots(longeur, largeur)
+	axs = axs.flatten()
 
+	newTest = []
+	houses = getHouseMap(dataField);
 
-		# printable	= df.apply(describeFeature);
-		# printFeatures(describeFeature(None), printable);
+	for realNamnonymous in name:
+		test = [];
+		for house, arr in houses.items():
+			test.append([row[realNamnonymous] for row in houses[house] if pand.notnull(row[realNamnonymous])])
+		newTest.append(test)
+
+	for i, ax in enumerate(axs):
+		if i in range(len(newTest)):
+			ax.set_title(label=name[i])
+			for testUltimate in newTest[i]:
+				ax.hist(testUltimate, alpha=0.5);
+		else:
+			ax.axis(False)
+	plt.show()
+
 
 def getHouseMap(dataField : pand.core.frame.DataFrame) -> {}:
-	houseMap = {}
+	houseMap = {};
 	for index, row in dataField.iterrows():
 		if (row is None):
 			continue ;
