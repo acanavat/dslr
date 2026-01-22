@@ -21,7 +21,7 @@ def main():
 	
 	#
 	# Extraction du dataset
-	dataField	= pand.read_csv(args.datasetPath);
+	dataField	= pand.read_csv(args.datasetPath)
 
 	#
 	# Creation du tableau de graphique
