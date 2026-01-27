@@ -7,19 +7,45 @@ import matplotlib.pyplot as plt
 
 import numpy    as np
 import pandas	as pand
-
+from utils 	  import mean
 from describe import describeFeature
 from describe import printFeatures
 
-def createTeta(house:array):
-	teta = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-	for eleve in house:
-		formula = 0
-		for it, mat in enumerate(eleve):
-			if type(mat) == float and not math.isnan(mat):
-				formula += teta[it] * mat
-		print(formula)
+def createTeta(house: array, feature: pand.Series):
+	teta = [0, 0, 0, 0, 0, 0, 0, 0]
+	x = -1
+	for key, value in feature.items():
+		x += 1
+		if key == "Hogwarts House":
+			continue
+		for eleve in house:
+			if type(eleve[x]) == float and not math.isnan(eleve[x]):
+				eleve[x] = (eleve[x] - value[2]) / value[3]
+	learning_rate = 0.1
+	
+	for epoch in range(10):
+		cost = 0
+		false = 0
+		for eleve in house:
+			prediction = 0
+			for it, mat in enumerate(eleve):
+				if type(mat) == np.float64 and not math.isnan(mat):
+					prediction += teta[it - 1] * mat
+			exp = math.exp(-prediction)
+			#maintenant on determine (pour la maison) si la prediction de la matiere vaut 0 ou 1 et en fonction on applique la formule 
+			sigmoide = 1 / (1 + exp)
+			if sigmoide > 0.5:
+				cost += -math.log(sigmoide)
+			else:
+				cost += -math.log(1 - sigmoide)
+				false += 1
+			error = sigmoide - 1
+			for it, mat in enumerate(eleve):
+				if type(mat) == np.float64 and not math.isnan(mat):
+					teta[it - 1] -= learning_rate * error * mat
+		error_rate = false / len(house)
+		j = 1/len(house) * cost
+		print(f"Epoch {epoch}: J={j:.3f}, Err={error_rate:.1%}, teta={teta[:3]}...")
 
 def handleTetaStudent(tetaArr:array, newStud:array):
 	print("on gere ", newStud, "tetas =", tetaArr)
@@ -48,6 +74,10 @@ def main():
 
 	dataFieldTrain = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
+	described = dataFieldTrain.apply(describeFeature)
+	# printFeatures(describeFeature(None), described)
+	# print(described)
+
 	#
 	# Creation de houseMap
 	houseMap = {}
@@ -59,7 +89,8 @@ def main():
 		houseMap[house].append(value)
 
 	for key, value in houseMap.items():
-		createTeta(value);
+		print("on gere la maison", key)
+		createTeta(value, described);
 		break
 	#calcul = value_Astro * TetaAstro + 
 
