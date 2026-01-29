@@ -13,8 +13,36 @@ from describe import describeFeature
 from describe import printFeatures
 
 def prediction(dataPrediction, tetaHouse):
-	for key, value in dataPrediction.items():
-		print(value[1])
+	best_sigmoide	= {}
+	goodPredictions	= {}
+	badPredictions	= {}
+
+	for elevePredict in dataPrediction.values:
+		for teta in tetaHouse.values:
+			predict = 0
+			#print(f"On gere: {teta[0]}")
+			for small_student, small_teta in zip(elevePredict[1:], teta[1:]): 
+				if not math.isnan(small_student):
+					predict += small_student * small_teta
+			#print(f"toujours la forme \033[5m{predict}")
+			best_sigmoide[teta[0]] = predict
+		
+		predictedHouse = max(best_sigmoide, key=best_sigmoide.get);
+		if type(elevePredict[0]) == str:
+			if elevePredict[0] not in goodPredictions:
+				goodPredictions[elevePredict[0]] = 0
+			if elevePredict[0] not in badPredictions:
+				badPredictions[elevePredict[0]] = 0
+
+			if elevePredict[0] == max(best_sigmoide, key=best_sigmoide.get):
+				goodPredictions[elevePredict[0]] += 1;
+			else:
+				print(f"{elevePredict[0]} [{predictedHouse}]\t: {best_sigmoide}")
+				badPredictions[elevePredict[0]] += 1;
+	print(f"good : {goodPredictions}")
+	print(f"bad  : {badPredictions}")
+#
+# Main
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("datasetPath", type=str)
@@ -24,19 +52,24 @@ def main():
 	# Creation de dataFieldPrediction
 	dataField	= pand.read_csv(args.datasetPath)
 	tabMat = [
-				"Hogwarts House", "Astronomy", "Herbology"
+				"Hogwarts House", "Astronomy", "Herbology",
 				"Divination", "Muggle Studies", "Ancient Runes",
 				"History of Magic", "Transfiguration", "Charms",
 				"Flying", "Defense Against the Dark Arts"
 			]
+	# tabMat = [
+	# 			"Hogwarts House",
+	# 			"Divination", "Muggle Studies", "Ancient Runes",
+	# 			"History of Magic", "Transfiguration", "Charms",
+	# 			"Flying"
+	# 		]
 
 	dataFieldPrediction = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
-	described = dataFieldPrediction.apply(describeFeature)
 	
 	houseMap = {}
-	with open("teta/brain", "r") as file:
-		tetaHouse = pand.read_csv("teta/brain")
-	prediction(dataFieldPrediction, tetaHouse)		
+	with open("teta/brain.csv", "r") as file:
+		tetaHouse = pand.read_csv("teta/brain.csv")
+	prediction(dataFieldPrediction, tetaHouse)
 if __name__ == "__main__":
 	main();

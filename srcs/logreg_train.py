@@ -12,9 +12,10 @@ from utils 	  import mean
 from describe import describeFeature
 from describe import printFeatures
 
-def createTeta(house: array, feature: pand.Series, houseName : str = "default"):
-	teta = [0, 0, 0, 0, 0, 0, 0, 0]
+def createTeta(house: array, feature: pand.Series):
+	teta = [0 for value in range(1, len(feature))]
 	x = -1
+
 	for key, value in feature.items():
 		x += 1
 		if key == "Hogwarts House":
@@ -44,22 +45,16 @@ def createTeta(house: array, feature: pand.Series, houseName : str = "default"):
 			for it, mat in enumerate(eleve):
 				if type(mat) == np.float64 and not math.isnan(mat):
 					teta[it - 1] -= learning_rate * error * mat
-	with open("teta/brain", "a") as file:
-		file.write(f"{houseName} : {teta}")
-		error_rate = false / len(house)
-		j = 1/len(house) * cost
+
+	
+	error_rate = false / len(house)
+	j = 1/len(house) * cost
 	print(f"Epoch {epoch}: J={j:.3f}, Err={error_rate:.1%}, teta={teta}...")
 
-def handleTetaStudent(tetaArr:array, newStud:array):
-	print("on gere ", newStud, "tetas =", tetaArr)
-
-		# init a 0
-	
-
+	return (teta)
 
 #
 # main
-
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("datasetPath", type=str)
@@ -69,12 +64,17 @@ def main():
 	# Creation de dataFieldTrain
 	dataField	= pand.read_csv(args.datasetPath)
 	tabMat = [
-				"Hogwarts House", "Astronomy", "Herbology"
+				"Hogwarts House", "Astronomy", "Herbology",
 				"Divination", "Muggle Studies", "Ancient Runes",
 				"History of Magic", "Transfiguration", "Charms",
 				"Flying", "Defense Against the Dark Arts"
 			]
-
+	# tabMat = [
+	# 			"Hogwarts House",
+	# 			"Divination", "Muggle Studies", "Ancient Runes",
+	# 			"History of Magic", "Transfiguration", "Charms",
+	# 			"Flying"
+	# 		]
 	dataFieldTrain = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
 	described = dataFieldTrain.apply(describeFeature)
@@ -91,12 +91,40 @@ def main():
 		if house not in houseMap:
 			houseMap[house] = []
 		houseMap[house].append(value)
-	if os.path.exists("teta/brain"):
-		os.remove("teta/brain")
+
+	tetaDict = {}
 	for key, value in houseMap.items():
 		print("on gere la maison", key)
-		createTeta(value, described, key)
-	#calcul = value_Astro * TetaAstro + 
+		if key not in tetaDict:
+			tetaDict[key] = []
+		tetaDict[key] = createTeta(value, described)
+
+
+	if os.path.exists("teta/brain.csv"):
+		os.remove("teta/brain.csv")
+
+	with open("teta/brain.csv", "a") as file:
+		# CSV Header
+		for index, mat in enumerate(tabMat):
+			if (index == 0):
+				file.write(f"House Name,")
+				continue ;
+			file.write(f"teta{index - 1}")
+			if (index < len(tabMat) - 1):
+				file.write(",")
+		file.write("\n")
+
+		# Values
+		for house, teta in tetaDict.items():
+			file.write(f"{house},")
+			for index, element in enumerate(teta):
+				file.write(f"{element}")
+				if (index < len(teta) - 1):
+					file.write(",")
+			file.write("\n")
+	
+
+
 
 #
 # Main guard
