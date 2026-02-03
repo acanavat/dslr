@@ -25,7 +25,7 @@ def createTeta(house: array, feature: pand.Series):
 				eleve[x] = (eleve[x] - value[2]) / value[3]
 	learning_rate = 0.001
 	
-	for epoch in range(1000):
+	for epoch in range(100):
 		cost = 0
 		false = 0
 		for eleve in house:
@@ -64,17 +64,12 @@ def main():
 	# Creation de dataFieldTrain
 	dataField	= pand.read_csv(args.datasetPath)
 	tabMat = [
-				"Hogwarts House", "Astronomy", "Herbology",
+				"Hogwarts House", "Astronomy", "Potions",
 				"Divination", "Muggle Studies", "Ancient Runes",
 				"History of Magic", "Transfiguration", "Charms",
 				"Flying", "Defense Against the Dark Arts"
 			]
-	# tabMat = [
-	# 			"Hogwarts House",
-	# 			"Divination", "Muggle Studies", "Ancient Runes",
-	# 			"History of Magic", "Transfiguration", "Charms",
-	# 			"Flying"
-	# 		]
+
 	dataFieldTrain = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
 	described = dataFieldTrain.apply(describeFeature)
