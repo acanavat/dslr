@@ -23,7 +23,7 @@ def createTeta(house: array, feature: pand.Series):
 		for eleve in house:
 			if type(eleve[x]) == float and not math.isnan(eleve[x]):
 				eleve[x] = (eleve[x] - value[2]) / value[3]
-	learning_rate = 0.001
+	learning_rate = 0.01
 	
 	for epoch in range(100):
 		cost = 0

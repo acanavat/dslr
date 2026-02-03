@@ -17,27 +17,16 @@ def prediction(dataPrediction, tetaHouse):
 	goodPredictions	= {}
 	badPredictions	= {}
 
-	describeFeatureArr	= dataPrediction.apply(describeFeature);
-	printFeatures(describeFeature(None), describeFeatureArr)
+	# describeFeatureArr	= dataPrediction.apply(describeFeature);
+	# printFeatures(describeFeature(None), describeFeatureArr)
 	# print(describeFeatureArr[2]);
 	
-	#message pour isibio : et si quand une valeur est null on prenait la moyenne de la valeur de la maison (peut etre un bon truc)
 	for elevePredict in dataPrediction.values:
-		# print(f"\n\nle eleve = {elevePredict}")
 		for teta in tetaHouse.values:
 			predict = 0
-			#print(f"On gere: {teta[0]}")
-			for small_student, small_teta, i in zip(elevePredict[1:], teta[1:], range(1, len(teta[1:]))): 
-				# print(f"gogogo = {small_student}")
-				# print("test : ", teta)
+			for small_student, small_teta in zip(elevePredict[1:], teta[1:]): 
 				if not math.isnan(small_student):
 					predict += small_student * small_teta
-				else:
-					# print("mat =", describeFeatureArr[i][2])
-					# print("fdp de i =", i)
-					predict += describeFeatureArr[i][2] * small_teta;
-					predict += 10000000000;
-			#print(f"toujours la forme \033[5m{predict}")
 			best_sigmoide[teta[0]] = predict
 		
 		predictedHouse = max(best_sigmoide, key=best_sigmoide.get)
