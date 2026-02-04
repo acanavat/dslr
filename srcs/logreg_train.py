@@ -1,16 +1,19 @@
+import os
 import csv
 import math
 import array
 import argparse
 import matplotlib
 import matplotlib.pyplot as plt
-import os
 
 import numpy    as np
 import pandas	as pand
-from utils 	  import mean
-from describe import describeFeature
-from describe import printFeatures
+
+from utils		import mean
+from describe	import describeFeature
+from describe	import printFeatures
+from utils		import getTableMat
+
 
 def createTeta(house: array, feature: pand.Series):
 	teta = [0 for value in range(1, len(feature))]
@@ -49,7 +52,7 @@ def createTeta(house: array, feature: pand.Series):
 	
 	error_rate = false / len(house)
 	j = 1/len(house) * cost
-	print(f"Epoch {epoch}: J={j:.3f}, Err={error_rate:.1%}, teta={teta}...")
+	print(f"Epoch {epoch}: J={j:.3f}, Err={error_rate:.1%}, teta=teta...")
 
 	return (teta)
 
@@ -63,12 +66,7 @@ def main():
 	#
 	# Creation de dataFieldTrain
 	dataField	= pand.read_csv(args.datasetPath)
-	tabMat = [
-				"Hogwarts House", "Astronomy", "Potions",
-				"Divination", "Muggle Studies", "Ancient Runes",
-				"History of Magic", "Transfiguration", "Charms",
-				"Flying", "Defense Against the Dark Arts"
-			]
+	tabMat = getTableMat();
 
 	dataFieldTrain = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 

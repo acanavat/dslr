@@ -19,3 +19,27 @@ def quartile(numbers, quartile):
 	if quartile == 3:
 		return float(numbers[int(len(numbers) - (len(numbers) / 4))])
 
+def getTableMat():
+	return (
+		[
+			"Hogwarts House",
+		
+			# Ravensclaw a part
+				"Muggle Studies",
+				"Charms",
+			# Slytherin a part
+				# "Divination",
+			# Gryffindor a part
+				"History of Magic",
+				# "Transfiguration",
+				"Flying",
+			# 50 / 50
+				"Astronomy",
+				# "Herbology",
+				"Defense Against the Dark Arts",
+				"Ancient Runes",
+			# Mixed
+				# "Arithmancy",
+				"Potions",
+				"Care of Magical Creatures"
+		]);

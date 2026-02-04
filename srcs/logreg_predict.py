@@ -1,14 +1,16 @@
+import os
 import csv
 import math
 import array
 import argparse
 import matplotlib
 import matplotlib.pyplot as plt
-import os
 
-import numpy	as np
-import pandas	as pand
+import numpy		as np
+import pandas		as pand
+
 from utils		import mean
+from utils		import getTableMat
 from describe	import describeFeature
 from describe	import printFeatures
 
@@ -18,26 +20,18 @@ def prediction(dataPrediction, tetaHouse):
 	badPredictions	= {}
 
 	describeFeatureArr	= dataPrediction.apply(describeFeature);
-	printFeatures(describeFeature(None), describeFeatureArr)
+	# printFeatures(describeFeature(None), describeFeatureArr)
 	# print(describeFeatureArr[2]);
 	
 	#message pour isibio : et si quand une valeur est null on prenait la moyenne de la valeur de la maison (peut etre un bon truc)
 	for elevePredict in dataPrediction.values:
-		# print(f"\n\nle eleve = {elevePredict}")
 		for teta in tetaHouse.values:
 			predict = 0
-			#print(f"On gere: {teta[0]}")
 			for small_student, small_teta, i in zip(elevePredict[1:], teta[1:], range(1, len(teta[1:]))): 
-				# print(f"gogogo = {small_student}")
-				# print("test : ", teta)
 				if not math.isnan(small_student):
 					predict += small_student * small_teta
-				else:
-					# print("mat =", describeFeatureArr[i][2])
-					# print("fdp de i =", i)
-					predict += describeFeatureArr[i][2] * small_teta;
-					predict += 10000000000;
-			#print(f"toujours la forme \033[5m{predict}")
+				# else:
+				# 	predict += describeFeatureArr[i][2] * small_teta;
 			best_sigmoide[teta[0]] = predict
 		
 		predictedHouse = max(best_sigmoide, key=best_sigmoide.get)
@@ -50,7 +44,7 @@ def prediction(dataPrediction, tetaHouse):
 			if elevePredict[0] == max(best_sigmoide, key=best_sigmoide.get):
 				goodPredictions[elevePredict[0]] += 1
 			else:
-				print(f"{elevePredict[0]} [{predictedHouse}]\t: {best_sigmoide}")
+				# print(f"{elevePredict[0]} [{predictedHouse}]\t: {best_sigmoide}")
 				badPredictions[elevePredict[0]] += 1
 	print(f"good : {goodPredictions}")
 	print(f"bad  : {badPredictions}")
@@ -70,18 +64,7 @@ def main():
 	# 			"History of Magic", "Transfiguration", "Charms",
 	# 			"Flying", "Defense Against the Dark Arts"
 	# 		]
-	tabMat = [
-				"Hogwarts House", "Astronomy", "Potions",
-				"Divination", "Muggle Studies", "Ancient Runes",
-				"History of Magic", "Transfiguration", "Charms",
-				"Flying", "Defense Against the Dark Arts"
-			]
-	# tabMat = [
-	# 			"Hogwarts House",
-	# 			"Divination", "Muggle Studies", "Ancient Runes",
-	# 			"History of Magic", "Transfiguration", "Charms",
-	# 			"Flying"
-	# 		]
+	tabMat = getTableMat();
 
 	dataFieldPrediction = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
