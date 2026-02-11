@@ -52,7 +52,7 @@ def createTeta(house: array, feature: pand.Series):
 	
 	error_rate = false / len(house)
 	j = 1/len(house) * cost
-	print(f"Epoch {epoch}: J={j:.3f}, Err={error_rate:.1%}, teta=teta...")
+	print(f"Epoch {epoch}: J={j:.3f}, Err={error_rate:.2%}, teta=teta...")
 
 	return (teta)
 
