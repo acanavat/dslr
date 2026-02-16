@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 import numpy	as np
 import pandas	as pand
 
-from describe import describeFeature
-from describe import printFeatures
+from utils		import softmax
+from describe 	import describeFeature
+from describe 	import printFeatures
 
 #
 # main

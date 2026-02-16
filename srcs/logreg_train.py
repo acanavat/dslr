@@ -10,51 +10,91 @@ import numpy    as np
 import pandas	as pand
 
 from utils		import mean
-from describe	import describeFeature
-from describe	import printFeatures
+from utils		import softmax
 from utils		import getTableMat
+from utils		import normalizeDatafield
+from describe	import printFeatures
+from describe	import describeFeature
+
+# def softmax(logits):
+# 	# logits = [score_maison0, score_maison1, score_maison2, score_maison3]
+# 	max_logit = max(logits)  # Stabilité
+# 	exp_logits = [math.exp(l - max_logit) for l in logits]
+# 	somme = sum(exp_logits)
+# 	return [e/somme for e in exp_logits]
+
+# def softmax(scores:np.ndarray) -> np.ndarray:
+
+# 	# you basically take the maximum of score and substract it with all other scores for numerical stability
+# 	scores -= scores.max()
+
+# 	# You then take exponent of scores since its negative and sum it along each row 
+# 	# You then divide each row with its transposed exponent to normalize it and transpose it back to give its original shape
+# 	softmax_out = (np.exp(scores).T / np.sum(np.exp(scores), axis=0)).T 
+
+# 	return softmax_out
+
+def replaceNanInArr(array: list) -> list:
+	for index, nanFinder in enumerate(array[1:]):
+		if math.isnan(nanFinder):
+			array[index + 1] = 0;
+	return(array)
 
 
-def createTeta(house: array, feature: pand.Series):
-	teta = [0 for value in range(1, len(feature))]
-	x = -1
+def createTeta(ds: pand.Series) -> list :
+	# tetaArr = [[]];
+	# [eleve1[zouk, afro dance, politique]
+	#   eleve2[...]]
+	#	E eleveX[1] 
 
-	for key, value in feature.items():
-		x += 1
-		if key == "Hogwarts House":
-			continue
-		for eleve in house:
-			if type(eleve[x]) == float and not math.isnan(eleve[x]):
-				eleve[x] = (eleve[x] - value[2]) / value[3]
-	learning_rate = 0.001
-	
-	for epoch in range(100):
-		cost = 0
-		false = 0
-		for eleve in house:
-			prediction = 0
-			for it, mat in enumerate(eleve):
-				if type(mat) == np.float64 and not math.isnan(mat):
-					prediction += teta[it - 1] * mat
-			exp = math.exp(-prediction)
-			#maintenant on determine (pour la maison) si la prediction de la matiere vaut 0 ou 1 et en fonction on applique la formule 
-			sigmoide = 1 / (1 + exp)
-			if sigmoide > 0.5:
-				cost += -math.log(sigmoide)
-			else:
-				cost += -math.log(1 - sigmoide)
-				false += 1
-			error = sigmoide - 1
-			for it, mat in enumerate(eleve):
-				if type(mat) == np.float64 and not math.isnan(mat):
-					teta[it - 1] -= learning_rate * error * mat
+	#
+	# Normalisation des valeurs
+	ds = normalizeDatafield(ds)
 
-	
-	error_rate = false / len(house)
-	j = 1/len(house) * cost
-	print(f"Epoch {epoch}: J={j:.3f}, Err={error_rate:.2%}, teta=teta...")
+	#
+	# Le training
+	learning8rate = 0.001
+	tetas = np.zeros([ds["Hogwarts House"].nunique(), ds.shape[1] - 1])
+	print("tetas:\n", tetas, "\n\n---\n");
 
-	return (teta)
+	houseIndex = {}
+	for i, house in enumerate(ds["Hogwarts House"].unique()):
+		houseIndex[house] = i
+	houseSerie = ds["Hogwarts House"];
+
+	scoreArray = [[]];
+	scoreArray = np.zeros([ds["Hogwarts House"].nunique(), 0])
+	for epoch in range(10):
+		total_loss = 0
+		n_samples = 0
+		for value in ds.values:
+			replaceNanInArr(value)
+			result = [];
+			for tetaHouse in tetas:
+				result.append(np.dot(value[1:], tetaHouse))
+
+			proba = softmax(np.asarray(result, dtype=np.float32), 0)
+
+			loss = -np.log(proba[houseIndex[value[0]]] + 1e-15)
+			total_loss += loss
+			# print(f"DEBUG proba: {proba}")
+			# print(f"DEBUG sum proba: {np.sum(proba)}")  # DOIT = 1.0
+			# print(f"DEBUG true proba: {proba[houseIndex[value[0]]]}")  # DOIT être 0→1
+
+			gradient = proba.copy()
+			gradient[houseIndex[value[0]]] -= 1
+
+			x = value[1:]
+			for k in range(len(tetas)):
+				tetas[k] = tetas[k].astype(np.float64) - learning8rate * gradient[k] * x
+			n_samples += 1
+		# print(f"EPOCH TERMINÉE - Perte moyenne: {total_loss/n_samples:.3f}")
+
+	tetaDict = {}
+	for i, house in enumerate(houseIndex):
+		tetaDict[house] = tetas[i];
+		print(house, ":", tetas[i])
+	return(tetaDict);
 
 #
 # main
@@ -66,33 +106,16 @@ def main():
 	#
 	# Creation de dataFieldTrain
 	dataField	= pand.read_csv(args.datasetPath)
-	tabMat = getTableMat();
+	tabMat		= getTableMat()
 
-	dataFieldTrain = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
-
-	described = dataFieldTrain.apply(describeFeature)
-	# described['Hogwarts House'] = dataFieldTrain['Hogwarts House']
-	# printFeatures(describeFeature(None), described)
-	# print(described)
+	dataFieldTrain	= pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
 	#
-	# Creation de houseMap
-	houseMap = {}
-	for value in dataFieldTrain.values:
-		house = value[0]
+	# On appelle la fonction de learn
+	tetaDict = createTeta(dataFieldTrain)
 
-		if house not in houseMap:
-			houseMap[house] = []
-		houseMap[house].append(value)
-
-	tetaDict = {}
-	for key, value in houseMap.items():
-		print("on gere la maison", key)
-		if key not in tetaDict:
-			tetaDict[key] = []
-		tetaDict[key] = createTeta(value, described)
-
-
+	#
+	# mettre les resultats dans le fichier
 	if os.path.exists("teta/brain.csv"):
 		os.remove("teta/brain.csv")
 
@@ -102,7 +125,8 @@ def main():
 			if (index == 0):
 				file.write(f"House Name,")
 				continue ;
-			file.write(f"teta{index - 1}")
+			# file.write(f"teta{index - 1}")
+			file.write(f"{mat}")
 			if (index < len(tabMat) - 1):
 				file.write(",")
 		file.write("\n")
@@ -116,9 +140,6 @@ def main():
 					file.write(",")
 			file.write("\n")
 	
-
-
-
 #
 # Main guard
 if __name__ == "__main__":
