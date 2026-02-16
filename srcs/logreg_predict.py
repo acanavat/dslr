@@ -10,12 +10,12 @@ import numpy		as np
 import pandas		as pand
 
 from utils			import mean
-from utils			import softmax
 from utils			import getTableMat
-from utils			import normalizeDatafield
 from describe		import printFeatures
 from describe		import describeFeature
 from logreg_train	import replaceNanInArr
+from utils_softmax	import softmax
+from utils_softmax	import normalizeDatafield
 
 def prediction(dataPrediction, tetaHouse):
 	#

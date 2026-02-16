@@ -9,12 +9,12 @@ import matplotlib.pyplot as plt
 import numpy    as np
 import pandas	as pand
 
-from utils		import mean
-from utils		import softmax
-from utils		import getTableMat
-from utils		import normalizeDatafield
-from describe	import printFeatures
-from describe	import describeFeature
+from utils			import mean
+from utils			import getTableMat
+from describe		import printFeatures
+from describe		import describeFeature
+from utils_softmax	import softmax
+from utils_softmax	import normalizeDatafield
 
 # def softmax(logits):
 # 	# logits = [score_maison0, score_maison1, score_maison2, score_maison3]
@@ -53,9 +53,10 @@ def createTeta(ds: pand.Series) -> list :
 
 	#
 	# Le training
-	learning8rate = 0.001
+	learning8rate	= 0.001
+	nbEpoch			= 1;
+
 	tetas = np.zeros([ds["Hogwarts House"].nunique(), ds.shape[1] - 1])
-	print("tetas:\n", tetas, "\n\n---\n");
 
 	houseIndex = {}
 	for i, house in enumerate(ds["Hogwarts House"].unique()):
@@ -64,7 +65,7 @@ def createTeta(ds: pand.Series) -> list :
 
 	scoreArray = [[]];
 	scoreArray = np.zeros([ds["Hogwarts House"].nunique(), 0])
-	for epoch in range(10):
+	for epoch in range(nbEpoch):
 		total_loss = 0
 		n_samples = 0
 		for value in ds.values:
