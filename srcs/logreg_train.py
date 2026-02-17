@@ -57,6 +57,9 @@ def createTeta(ds: pand.Series) -> list :
 	nbEpoch			= 1;
 
 	tetas = np.zeros([ds["Hogwarts House"].nunique(), ds.shape[1] - 1])
+	if (not len(tetas)):
+		print(f"Error, 'Hogwarts House' key seems empty")
+		return ([]);
 
 	houseIndex = {}
 	for i, house in enumerate(ds["Hogwarts House"].unique()):
@@ -106,14 +109,20 @@ def main():
 
 	#
 	# Creation de dataFieldTrain
-	dataField	= pand.read_csv(args.datasetPath)
-	tabMat		= getTableMat()
+	try:
+		dataField	= pand.read_csv(args.datasetPath)
+		tabMat		= getTableMat()
 
-	dataFieldTrain	= pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
+		dataFieldTrain	= pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
+	except Exception as e:
+		print(e);
+		return ;
 
 	#
 	# On appelle la fonction de learn
 	tetaDict = createTeta(dataFieldTrain)
+	if (not len(tetaDict)):
+		return ;
 
 	#
 	# mettre les resultats dans le fichier

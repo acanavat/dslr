@@ -76,7 +76,7 @@ def prediction(dataPrediction, tetaHouse):
 			if predictedHouseStr == correctHouseStr:
 				goodPredictions[predictedHouseStr] += 1
 			else:
-				print(f"bad prediction ({predictedHouseStr}!={correctHouseStr})")
+				print(f"bad prediction ({predictedHouseStr}!={correctHouseStr})\t{softmax_result[studentIndex]}")
 				badPredictions[predictedHouseStr] += 1
 
 	#
@@ -99,12 +99,16 @@ def main():
 
 	#
 	# Creation de dataFieldPrediction
-	dataField			= pand.read_csv(args.datasetPath)
-	tabMat				= getTableMat();
-	dataFieldPrediction = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
+	try:
+		dataField			= pand.read_csv(args.datasetPath)
+		tabMat				= getTableMat();
+		dataFieldPrediction = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
-	with open("teta/brain.csv", "r") as file:
-		tetaHouse = pand.read_csv("teta/brain.csv")
+		with open("teta/brain.csv", "r") as file:
+			tetaHouse = pand.read_csv("teta/brain.csv")
+	except Exception as e:
+		print(e);
+		return ;
 
 	#
 	# Appel de la fonctiond de prediction

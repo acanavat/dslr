@@ -30,7 +30,10 @@ def softmax(z, axis):
 
 def normalizeDatafield(df: pand.core.frame.DataFrame):
 	described	= df.apply(describeFeature)
+
 	for key in df.columns:
+		if (df[key].dtype != np.float64):
+			continue ;
 		if key == "Hogwarts House":
 			continue
 

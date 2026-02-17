@@ -18,20 +18,22 @@ def main():
 	parser.add_argument("datasetPath", type=str)
 	args = parser.parse_args()
 
+	#
 	# Extraction du dataset
 	dataField			= pand.read_csv(args.datasetPath);
 	describeFeatureArr	= dataField.apply(describeFeature);
+
+	#
+	# Appel de describeFeature et affichage des resultats avec printFeatures
 	describeFeatureLeg	= describeFeature(None);
 	printFeatures(describeFeatureLeg, describeFeatureArr);
-
-	# Creation des features (type Feature)
 
 #
 # Utils
 def describeFeature(feature : pand.Series) -> list :
 
 	#
-	# Check si la valeur demandee est la legande
+	# Si None est passe en argument, on retourne la legende
 	if (feature is None):
 		return ([
 			"name",
@@ -50,15 +52,25 @@ def describeFeature(feature : pand.Series) -> list :
 		return ;
 
 
-	# print("\n---\n");
-	# print("feature : {}".format(feature.name))
-	# print("        : {}".format(feature.values))
-	# print("        : {}".format(feature.dtype))
-	# print("        : {}".format(type(feature.values[0])))
+	# prints de debug
+	if False:
+		print("\n---\n");
+		print("feature : {}".format(feature.name))
+		print("        : {}".format(feature.values))
+		print("        : {}".format(feature.dtype))
+		print("        : {}".format(type(feature.values[0])))
 
+	#
+	# Extraction des valeurs de la feature
 	arrayClean = [value for value in feature.values if not math.isnan(value)];
 	arrayClean.sort()
 
+	# Check si le tableau n'est pas vide
+	if not len(arrayClean):
+		return([])
+
+	#
+	# Execution des calculs dans le tableau 'arrayResult'
 	arrayResult = [
 		feature.name,
 		len(arrayClean),
@@ -70,21 +82,21 @@ def describeFeature(feature : pand.Series) -> list :
 		utils.quartile(arrayClean, 3),
 		max(arrayClean)];
 
-	# print("arrayResult  {}".format(arrayResult))
-
-	# print("count  {}".format(len(arrayClean)))
-	# print("mean   {}".format(utils.mean(arrayClean)))
-	# print("std    {}".format(utils.std(arrayClean)))
-	# print("min    {}".format(min(arrayClean)))
-	# print("25%    {}".format(utils.quartile(arrayClean, 1)))
-	# print("50%    {}".format(utils.quartile(arrayClean, 2)))
-	# print("75%    {}".format(utils.quartile(arrayClean, 3)))
-	# print("max    {}".format(max(arrayClean)))
+	# prints de debug
+	if False:
+		print("arrayResult  {}".format(arrayResult))
+		print("count  {}".format(len(arrayClean)))
+		print("mean   {}".format(utils.mean(arrayClean)))
+		print("std    {}".format(utils.std(arrayClean)))
+		print("min    {}".format(min(arrayClean)))
+		print("25%    {}".format(utils.quartile(arrayClean, 1)))
+		print("50%    {}".format(utils.quartile(arrayClean, 2)))
+		print("75%    {}".format(utils.quartile(arrayClean, 3)))
+		print("max    {}".format(max(arrayClean)))
 
 	return (arrayResult);
 
 def printFeatures(legend, featureArr, width = 16):
-	#
 	# Check que tous les tableaux sont de la meme taille
 	arrLen = 0;
 	for row in featureArr:
