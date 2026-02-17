@@ -16,23 +16,6 @@ from describe		import describeFeature
 from utils_softmax	import softmax
 from utils_softmax	import normalizeDatafield
 
-# def softmax(logits):
-# 	# logits = [score_maison0, score_maison1, score_maison2, score_maison3]
-# 	max_logit = max(logits)  # Stabilité
-# 	exp_logits = [math.exp(l - max_logit) for l in logits]
-# 	somme = sum(exp_logits)
-# 	return [e/somme for e in exp_logits]
-
-# def softmax(scores:np.ndarray) -> np.ndarray:
-
-# 	# you basically take the maximum of score and substract it with all other scores for numerical stability
-# 	scores -= scores.max()
-
-# 	# You then take exponent of scores since its negative and sum it along each row 
-# 	# You then divide each row with its transposed exponent to normalize it and transpose it back to give its original shape
-# 	softmax_out = (np.exp(scores).T / np.sum(np.exp(scores), axis=0)).T 
-
-# 	return softmax_out
 
 def replaceNanInArr(array: list) -> list:
 	for index, nanFinder in enumerate(array[1:]):
@@ -53,7 +36,7 @@ def createTeta(ds: pand.Series) -> list :
 
 	#
 	# Le training
-	learning8rate	= 0.001
+	learning8rate	= 0.01
 	nbEpoch			= 1;
 
 	tetas = np.zeros([ds["Hogwarts House"].nunique(), ds.shape[1] - 1])

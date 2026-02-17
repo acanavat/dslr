@@ -9,13 +9,14 @@ import matplotlib.pyplot as plt
 import numpy		as np
 import pandas		as pand
 
-from utils			import mean
-from utils			import getTableMat
-from describe		import printFeatures
-from describe		import describeFeature
-from logreg_train	import replaceNanInArr
-from utils_softmax	import softmax
-from utils_softmax	import normalizeDatafield
+from utils				import mean
+from utils				import getTableMat
+from describe			import printFeatures
+from describe			import describeFeature
+from logreg_train		import replaceNanInArr
+from utils_softmax		import softmax
+from utils_softmax		import normalizeDatafield
+from sklearn.metrics	import accuracy_score
 
 def prediction(dataPrediction, tetaHouse):
 	#
@@ -56,9 +57,10 @@ def prediction(dataPrediction, tetaHouse):
 
 	#
 	# Traitement des resultats de prediction
-	goodPredictions		= {}
-	badPredictions		= {}
-	predictionList		= [];
+	goodPredictions			= {};
+	badPredictions			= {};
+	predictionList			= [];
+	correctPredictionList	= [];
 
 	for studentIndex, predictedHouse in enumerate(predict):
 		predictedHouseStr	= houseIndexDict[predictedHouse];
@@ -79,12 +81,19 @@ def prediction(dataPrediction, tetaHouse):
 				print(f"bad prediction ({predictedHouseStr}!={correctHouseStr})\t{softmax_result[studentIndex]}")
 				badPredictions[predictedHouseStr] += 1
 
+			# Recuperation des bons resultats
+			for key, value in houseIndexDict.items():
+				if value == correctHouseStr:
+					correctPredictionList.append(key)
+
 	#
 	# Affichage des predictions (si le dataset fournit les maisons correctes)
 	if goodPredictions:
 		print(f"good : {goodPredictions}")
 	if badPredictions:
 		print(f"bad  : {badPredictions}")
+	if (len(correctPredictionList)):
+		print(accuracy_score(predict, correctPredictionList))
 
 	#
 	# Return des resultats
