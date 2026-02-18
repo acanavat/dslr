@@ -24,7 +24,7 @@ def main():
 		dataField			= pand.read_csv(args.datasetPath)
 		dataFieldDefinitive	= pand.DataFrame()
 	except Exception as e:
-		print(e);
+		print(f"{type(e).__name__} : {e}")
 		return ;
 
 	for key, value in dataField.items():
@@ -47,4 +47,9 @@ def main():
 #
 # Main guard
 if __name__ == "__main__":
-	main();
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");

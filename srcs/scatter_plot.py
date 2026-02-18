@@ -27,7 +27,7 @@ def main():
 		# dataField			= normalizeDatafield(dataField);
 		describeFeatureLeg	= describeFeature(None);
 	except Exception as e:
-		print(e);
+		print(f"{type(e).__name__} : {e}")
 		return ;
 
 	# Creation du graph
@@ -66,4 +66,9 @@ def main():
 #
 # Main guard
 if __name__ == "__main__":
-	main();
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");

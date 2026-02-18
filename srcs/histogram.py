@@ -24,7 +24,7 @@ def main():
 	try:
 		dataField	= pand.read_csv(args.datasetPath)
 	except Exception as e:
-		print(e);
+		print(f"{type(e).__name__} : {e}")
 		return ;
 
 	#
@@ -94,4 +94,9 @@ def getHouseMap(dataField : pand.core.frame.DataFrame) -> {}:
 #
 # Main guard
 if __name__ == "__main__":
-	main();
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");

@@ -98,7 +98,7 @@ def main():
 
 		dataFieldTrain	= pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 	except Exception as e:
-		print(e);
+		print(f"{type(e).__name__} : {e}")
 		return ;
 
 	#
@@ -136,4 +136,9 @@ def main():
 #
 # Main guard
 if __name__ == "__main__":
-	main();
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");

@@ -20,8 +20,12 @@ def main():
 
 	#
 	# Extraction du dataset
-	dataField			= pand.read_csv(args.datasetPath);
-	describeFeatureArr	= dataField.apply(describeFeature);
+	try:
+		dataField			= pand.read_csv(args.datasetPath);
+		describeFeatureArr	= dataField.apply(describeFeature);
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+		return ;
 
 	#
 	# Appel de describeFeature et affichage des resultats avec printFeatures
@@ -132,4 +136,9 @@ def pandasSerieToList(serie : pand.Series) -> list :
 #
 # Main guard
 if __name__ == "__main__":
-	main();
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");

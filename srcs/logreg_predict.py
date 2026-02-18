@@ -32,6 +32,8 @@ def prediction(dataPrediction, tetaHouse):
 	#				[nb classes : nb features] a [nb features : nb classes]
 	#				- on en profite pour creer `houseIndexDict` qui va nous permettre
 	#				d'interpreter les resultats de sortie de softmax
+	#				houseIndexDict a pour	key : l'ID de la maison
+	#										value : le nom de la maison
 	tetaArrReshaped	= [[]];
 	houseIndexDict	= {}
 
@@ -116,7 +118,7 @@ def main():
 		with open("teta/brain.csv", "r") as file:
 			tetaHouse = pand.read_csv("teta/brain.csv")
 	except Exception as e:
-		print(e);
+		print(f"{type(e).__name__} : {e}")
 		return ;
 
 	#
@@ -137,4 +139,9 @@ def main():
 			file.write(f"{index},{house}\n")
 
 if __name__ == "__main__":
-	main()
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");
