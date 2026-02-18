@@ -21,6 +21,7 @@ def prediction(dataPrediction, tetaHouse):
 	# printFeatures(describeFeature(None), describeFeatureArr)
 	# print(describeFeatureArr[2]);
 	
+
 	for elevePredict in dataPrediction.values:
 		for teta in tetaHouse.values:
 			predict = 0
@@ -28,6 +29,7 @@ def prediction(dataPrediction, tetaHouse):
 				if not math.isnan(small_student):
 					predict += small_student * small_teta
 			best_sigmoide[teta[0]] = predict
+			
 		
 		predictedHouse = max(best_sigmoide, key=best_sigmoide.get)
 		if type(elevePredict[0]) == str:
@@ -62,7 +64,7 @@ def main():
 	tabMat = [
 				"Hogwarts House", "Astronomy", "Potions",
 				"Divination", "Muggle Studies", "Ancient Runes",
-				"History of Magic", "Transfiguration", "Charms",
+				"History of Magic", "Charms",
 				"Flying", "Defense Against the Dark Arts"
 			]
 	# tabMat = [

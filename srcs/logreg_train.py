@@ -23,7 +23,7 @@ def createTeta(house: array, feature: pand.Series):
 		for eleve in house:
 			if type(eleve[x]) == float and not math.isnan(eleve[x]):
 				eleve[x] = (eleve[x] - value[2]) / value[3]
-	learning_rate = 0.01
+	learning_rate = 0.001
 	
 	for epoch in range(100):
 		cost = 0
@@ -66,9 +66,10 @@ def main():
 	tabMat = [
 				"Hogwarts House", "Astronomy", "Potions",
 				"Divination", "Muggle Studies", "Ancient Runes",
-				"History of Magic", "Transfiguration", "Charms",
+				"History of Magic", "Charms",
 				"Flying", "Defense Against the Dark Arts"
 			]
+
 
 	dataFieldTrain = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
