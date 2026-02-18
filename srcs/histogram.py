@@ -21,7 +21,11 @@ def main():
 	
 	#
 	# Extraction du dataset
-	dataField	= pand.read_csv(args.datasetPath)
+	try:
+		dataField	= pand.read_csv(args.datasetPath)
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+		return ;
 
 	#
 	# Creation du tableau de graphique
@@ -44,7 +48,7 @@ def main():
 		graphArr.append(classNotes)
 
 	#
-	# Graphique
+	# Graphiques
 	largeur 				= 5;
 	longeur 				= 3;
 	premierPodcastDeFrance	= False;
@@ -80,7 +84,7 @@ def getHouseMap(dataField : pand.core.frame.DataFrame) -> {}:
 		# Recuperation de la key et check qu'elle ne soit pas null
 		key = row['Hogwarts House']
 		if (type(key) is not str and math.isnan(key)):
-			continue ;
+			key = "No House" ;
 
 		if key not in houseMap:
 			houseMap[key] = [];
@@ -90,4 +94,9 @@ def getHouseMap(dataField : pand.core.frame.DataFrame) -> {}:
 #
 # Main guard
 if __name__ == "__main__":
-	main();
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");

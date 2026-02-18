@@ -3,10 +3,10 @@ import math
 import array
 import argparse
 
-import seaborn				as sns
-import matplotlib.pyplot	as plt
 import numpy				as np
 import pandas				as pand
+import seaborn				as sns
+import matplotlib.pyplot	as plt
 
 from describe import describeFeature
 from describe import printFeatures
@@ -20,24 +20,36 @@ def main():
 	args = parser.parse_args()
 
 	# Extraction du dataset et des valeurs de describe
-	dataField			= pand.read_csv(args.datasetPath)
-	dataFieldDefinitive	= pand.DataFrame()
-	# penguins			= sns.load_dataset(args.datasetPath)
-	
+	try:
+		dataField			= pand.read_csv(args.datasetPath)
+		dataFieldDefinitive	= pand.DataFrame()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+		return ;
+
 	for key, value in dataField.items():
 		if key == "Hogwarts House":
-			dataFieldDefinitive[key] = value;
+			houseArr = [];
+			for house in value:
+				if (type(house) is not str and math.isnan(house)):
+					house = "No House" ;
+				houseArr.append(house);
+			dataFieldDefinitive[key] = houseArr;
+			continue ;
+
 		if (value.dtype != np.float64):
 			continue;
 		dataFieldDefinitive[key] = value;
 
-	print(dataFieldDefinitive);
-
 	sns.pairplot(pand.DataFrame(dataFieldDefinitive), hue="Hogwarts House")
 	plt.show()
-
 
 #
 # Main guard
 if __name__ == "__main__":
-	main();
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");

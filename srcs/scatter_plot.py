@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 import numpy	as np
 import pandas	as pand
 
-from describe import describeFeature
-from describe import printFeatures
+from describe		import describeFeature
+from describe		import printFeatures
+from utils_softmax	import normalizeDatafield
 
 #
 # main
@@ -20,9 +21,14 @@ def main():
 	args = parser.parse_args()
 
 	# Extraction du dataset et des valeurs de describe
-	dataField			= pand.read_csv(args.datasetPath)
-	describeFeatureArr	= dataField.apply(describeFeature);
-	describeFeatureLeg	= describeFeature(None);
+	try:
+		dataField			= pand.read_csv(args.datasetPath)
+		describeFeatureArr	= dataField.apply(describeFeature);
+		# dataField			= normalizeDatafield(dataField);
+		describeFeatureLeg	= describeFeature(None);
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+		return ;
 
 	# Creation du graph
 	classNameArr		= [];
@@ -30,7 +36,7 @@ def main():
 	yTickArr			= [];
 
 	for value in describeFeatureArr:
-		if value is None:
+		if value is None or not len(value):
 			continue
 		xTick = value[2];
 		yTick = value[3];
@@ -39,6 +45,16 @@ def main():
 		classNameArr.append(value[0]);
 		xTickArr.append(xTick);
 		yTickArr.append(yTick);
+
+	# print(dataField);
+	# for it in dataField.items():
+		# key		= it[0]
+		# feature	= it[1]
+		# if (feature.dtype != np.float64):
+			# continue ;
+		# print(f"{feature.values}")
+		# for note in feature:
+			# plt.scatter(note, note, s=15)
 
 	# Affichage du graph
 	plt.xlabel("mean")
@@ -50,4 +66,9 @@ def main():
 #
 # Main guard
 if __name__ == "__main__":
-	main();
+	try:
+		main()
+	except Exception as e:
+		print(f"{type(e).__name__} : {e}")
+	except KeyboardInterrupt:
+		print("");
