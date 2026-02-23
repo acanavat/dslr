@@ -23,35 +23,35 @@ def main():
 	# Extraction du dataset et des valeurs de describe
 	try:
 		dataField			= pand.read_csv(args.datasetPath)
-		describeFeatureArr	= dataField.apply(describeFeature);
-		# dataField			= normalizeDatafield(dataField);
-		describeFeatureLeg	= describeFeature(None);
+		describeFeatureArr	= dataField.apply(describeFeature)
+		# dataField			= normalizeDatafield(dataField)
+		describeFeatureLeg	= describeFeature(None)
 	except Exception as e:
 		print(f"{type(e).__name__} : {e}")
-		return ;
+		return
 
 	# Creation du graph
-	classNameArr		= [];
-	xTickArr			= [];
-	yTickArr			= [];
+	classNameArr		= []
+	xTickArr			= []
+	yTickArr			= []
 
 	for value in describeFeatureArr:
 		if value is None or not len(value):
 			continue
-		xTick = value[2];
-		yTick = value[3];
+		xTick = value[2]
+		yTick = value[3]
 		plt.scatter(xTick, yTick, s=15)
 
-		classNameArr.append(value[0]);
-		xTickArr.append(xTick);
-		yTickArr.append(yTick);
+		classNameArr.append(value[0])
+		xTickArr.append(xTick)
+		yTickArr.append(yTick)
 
-	# print(dataField);
+	# print(dataField)
 	# for it in dataField.items():
 		# key		= it[0]
 		# feature	= it[1]
 		# if (feature.dtype != np.float64):
-			# continue ;
+			# continue
 		# print(f"{feature.values}")
 		# for note in feature:
 			# plt.scatter(note, note, s=15)
@@ -71,4 +71,4 @@ if __name__ == "__main__":
 	except Exception as e:
 		print(f"{type(e).__name__} : {e}")
 	except KeyboardInterrupt:
-		print("");
+		print("")

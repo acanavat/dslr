@@ -25,7 +25,7 @@ def main():
 		dataField	= pand.read_csv(args.datasetPath)
 	except Exception as e:
 		print(f"{type(e).__name__} : {e}")
-		return ;
+		return
 
 	#
 	# Creation du tableau de graphique
@@ -36,33 +36,30 @@ def main():
 		classNameArr.append(key)
 
 	graphArr = []
-	houses = getHouseMap(dataField);
+	houses = getHouseMap(dataField)
 
 	for realNamnonymous in classNameArr:
-		# print("creating array for class :", realNamnonymous);
-		classNotes = [];
+		classNotes = []
 		for house, arr in houses.items():
-			# print("          handling house >", house);
 			classNotes.append([row[realNamnonymous] for row in houses[house] if pand.notnull(row[realNamnonymous])])
-		# print(classNotes, "\n\n\n\n")
 		graphArr.append(classNotes)
 
 	#
 	# Graphiques
-	largeur 				= 5;
-	longeur 				= 3;
-	premierPodcastDeFrance	= False;
+	largeur 				= 5
+	longeur 				= 3
+	premierPodcastDeFrance	= False
 	
 	fig, axs	= plt.subplots(longeur, largeur)
 	axs			= axs.flatten()
-	handles		= [];
-	labels		= list(houses.keys());
+	handles		= []
+	labels		= list(houses.keys())
 
 	for i, ax in enumerate(axs):
 		if i in range(len(graphArr)):
 			ax.set_title(label=classNameArr[i], size=10)
 			for j, testUltimate in enumerate((((((graphArr[i])))))):
-				n, bins, patches = ax.hist(testUltimate, alpha=0.4, histtype="bar");
+				n, bins, patches = ax.hist(testUltimate, alpha=0.4, histtype="bar")
 
 				handles.append(patches[0])
 
@@ -75,21 +72,21 @@ def main():
 
 
 def getHouseMap(dataField : pand.core.frame.DataFrame) -> {}:
-	houseMap = {};
+	houseMap = {}
 	for index, row in dataField.iterrows():
 		if (row is None):
-			continue ;
+			continue
 
 		#
 		# Recuperation de la key et check qu'elle ne soit pas null
 		key = row['Hogwarts House']
 		if (type(key) is not str and math.isnan(key)):
-			key = "No House" ;
+			key = "No House"
 
 		if key not in houseMap:
-			houseMap[key] = [];
-		houseMap[key].append(row);
-	return (houseMap);
+			houseMap[key] = []
+		houseMap[key].append(row)
+	return (houseMap)
 
 #
 # Main guard
@@ -99,4 +96,4 @@ if __name__ == "__main__":
 	except Exception as e:
 		print(f"{type(e).__name__} : {e}")
 	except KeyboardInterrupt:
-		print("");
+		print("")

@@ -33,7 +33,7 @@ def normalizeDatafield(df: pand.core.frame.DataFrame):
 
 	for key in df.columns:
 		if (df[key].dtype != np.float64):
-			continue ;
+			continue
 		if key == "Hogwarts House":
 			continue
 

@@ -34,19 +34,16 @@ def prediction(dataPrediction, tetaHouse):
 	#				d'interpreter les resultats de sortie de softmax
 	#				houseIndexDict a pour	key : l'ID de la maison
 	#										value : le nom de la maison
-	tetaArrReshaped	= [[]];
+	tetaArrReshaped	= [[]]
 	houseIndexDict	= {}
 
 	for houseIndex, value in enumerate(tetaHouse.values):
 		for tetaIndex, teta in enumerate(value[1:]):
 			if len(tetaArrReshaped) <= tetaIndex:
-				tetaArrReshaped.append([]);
+				tetaArrReshaped.append([])
 			tetaArrReshaped[tetaIndex].append(teta)
 
 		houseIndexDict[houseIndex] = value[0]
-
-	# print(f"houseIndexDict:\n{houseIndexDict}");
-	# print(f"tetaArrReshaped norm:\n{np.linalg.norm(tetaArrReshaped)}");
 
 	#
 	# Calculs de prediction avec softmax
@@ -54,22 +51,21 @@ def prediction(dataPrediction, tetaHouse):
 	softmax_result	= softmax(dot_result, 1)
 	predict			= np.argmax(softmax_result, axis=1)
 
-	# print(f"predict:\n{predict}");
-	# print(f"sum of softmax results:\n{np.sum(softmax_result, axis=1)}");
+	# print(f"sum of softmax results:\n{np.sum(softmax_result, axis=1)}")
 
 	#
 	# Traitement des resultats de prediction
-	goodPredictions			= {};
-	badPredictions			= {};
-	predictionList			= [];
-	correctPredictionList	= [];
+	goodPredictions			= {}
+	badPredictions			= {}
+	predictionList			= []
+	correctPredictionList	= []
 
 	for studentIndex, predictedHouse in enumerate(predict):
-		predictedHouseStr	= houseIndexDict[predictedHouse];
+		predictedHouseStr	= houseIndexDict[predictedHouse]
 		predictionList.append(predictedHouseStr)
 
 		# comptage des erreurs (si le dataset fournit les maisons correctes)
-		correctHouseStr		= dataPrediction.values[studentIndex][0];
+		correctHouseStr		= dataPrediction.values[studentIndex][0]
 
 		if type(correctHouseStr) == str:
 			if predictedHouseStr not in goodPredictions:
@@ -91,35 +87,35 @@ def prediction(dataPrediction, tetaHouse):
 	#
 	# Affichage des predictions (si le dataset fournit les maisons correctes)
 	if goodPredictions:
-		print(f"good : {goodPredictions}")
+		print(f"good            : {goodPredictions}")
 	if badPredictions:
-		print(f"bad  : {badPredictions}")
+		print(f"bad             : {badPredictions}")
 	if (len(correctPredictionList)):
-		print(accuracy_score(predict, correctPredictionList))
+		print(f"accuracy_score  : {accuracy_score(predict, correctPredictionList)}")
 
 	#
 	# Return des resultats
-	return (predictionList);
+	return (predictionList)
 
 #
 # Main
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("datasetPath", type=str)
+	parser.add_argument("tetasPath", type=str)
 	args = parser.parse_args()
 
 	#
 	# Creation de dataFieldPrediction
 	try:
 		dataField			= pand.read_csv(args.datasetPath)
-		tabMat				= getTableMat();
+		tabMat				= getTableMat()
 		dataFieldPrediction = pand.DataFrame({key:value for key, value in dataField.items() if key in tabMat})
 
-		with open("teta/brain.csv", "r") as file:
-			tetaHouse = pand.read_csv("teta/brain.csv")
+		tetaHouse = pand.read_csv(args.tetasPath)
 	except Exception as e:
 		print(f"{type(e).__name__} : {e}")
-		return ;
+		return 
 
 	#
 	# Appel de la fonctiond de prediction
@@ -144,4 +140,4 @@ if __name__ == "__main__":
 	except Exception as e:
 		print(f"{type(e).__name__} : {e}")
 	except KeyboardInterrupt:
-		print("");
+		print("")
